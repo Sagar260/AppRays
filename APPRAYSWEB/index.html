@@ -1,0 +1,1305 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AppRays</title>
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;700&display=swap">
+    <link rel="stylesheet" href="styles.css">
+</head>
+
+<body>
+    <header id="header">
+        <div class="header-container">
+            <img src="images/logo.png" alt="App Logo" class="logo desktop-only">
+            <nav class="desktop-nav">
+                <ul>
+                    <li><a href="#home">Home</a></li>
+                    <li><a href="#services">Services</a></li>
+                    <li><a href="#portfolio">Portfolio</a></li>
+                    <li><a href="#testimonial">Testimonials</a></li>
+                    <li><a href="#team">Team</a></li>
+                    <li><a href="#faq">FAQs</a></li>
+                    <li><a href="#contact">Contact</a></li>
+                </ul>
+            </nav>
+            <div class="header-right desktop-only">
+                <img src="images/phone-icon.png" alt="Phone Icon" class="phone-icon">
+                <span class="phone-number">+92-303-2777-297</span>
+                <a href="#" class="get-quote-button" id="get-quote-button">Get Quote</a>
+            </div>
+            <div class="mobile-header mobile-only">
+                <img src="images/logo.png" alt="App Logo" class="mobile-logo">
+                <img src="images/Menu.png" alt="Menu Icon" class="mobile-menu-icon" id="menu-icon">
+            </div>
+        </div>
+    </header>
+    
+    <!-- Modal is hidden by default using inline CSS -->
+    <section id="get-quote-modal" class="modal" style="display: none;">
+        <div class="modal-content">
+            <span class="close-button" id="close-button">&times;</span>
+            <h2>Got a Project <span class="highlight">Idea?</span></h2>
+            <p>Briefly describe your project, its goals, and timeline. Include any key issues or challenges. Submit your details, and our team will get back to you.</p>
+            <form action="https://formspree.io/f/mvgpawzz" method="POST">
+                <p>I'm interested in</p>
+                <div class="interest-buttons">
+                    <button type="button" class="interest-button" data-interest="software">Software</button>
+                    <button type="button" class="interest-button" data-interest="mobile-app">Mobile App</button>
+                    <button type="button" class="interest-button" data-interest="product-design">Product Design</button>
+                    <button type="button" class="interest-button" data-interest="other">Other</button>
+                </div>
+                <label for="name">Name</label>
+                <input type="text" id="name" name="name" placeholder="Your name" required>
+                <label for="email">Email address</label>
+                <input type="email" id="email" name="email" placeholder="Your email address" required>
+                <label for="message">Your message</label>
+                <textarea id="message" name="message" placeholder="Enter your question or message" required></textarea>
+                <button type="submit" class="send-message-button">Send Message</button>
+            </form>
+        </div>
+    </section>
+    
+    <nav class="mobile-drawer" id="mobile-drawer">
+        <ul>
+            <li><a href="#home">Home</a></li>
+            <li><a href="#services">Services</a></li>
+            <li><a href="#portfolio">Portfolio</a></li>
+            <li><a href="#testimonial">Testimonials</a></li>
+            <li><a href="#team">Team</a></li>
+            <li><a href="#faq">FAQs</a></li>
+            <li><a href="#contact">Contact</a></li>
+        </ul>
+    </nav>
+
+    <div class="overlay" id="overlay"></div>
+    
+    <script>
+        document.addEventListener("DOMContentLoaded", function () {
+            const menuIcon = document.getElementById('menu-icon');
+            const mobileDrawer = document.getElementById('mobile-drawer');
+            const overlay = document.getElementById('overlay');
+        
+            // Toggle the mobile drawer and overlay visibility
+            function toggleDrawer() {
+                mobileDrawer.classList.toggle('active');
+                overlay.classList.toggle('active');
+            }
+        
+            // Event listener for the menu icon to toggle the drawer
+            menuIcon.addEventListener('click', toggleDrawer);
+        
+            // Event listener for the overlay to close the drawer
+            overlay.addEventListener('click', toggleDrawer);
+        
+            // Intersection Observer for animations
+            const observer = new IntersectionObserver((entries, observer) => {
+                entries.forEach(entry => {
+                    if (entry.isIntersecting) {
+                        entry.target.classList.add('animate-visible');
+                        observer.unobserve(entry.target);
+                    }
+                });
+            }, { threshold: 0.1 });
+        
+            document.querySelectorAll('.animate').forEach(element => {
+                observer.observe(element);
+            });
+        
+            // Event listeners for buttons that open modals
+            document.querySelectorAll('[data-modal]').forEach(button => {
+                button.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    const modalId = this.getAttribute('data-modal');
+                    openModal(modalId);
+                });
+            });
+        
+            // Event listeners for close buttons inside modals
+            document.querySelectorAll('.modal .close').forEach(closeBtn => {
+                closeBtn.addEventListener('click', function() {
+                    const modal = this.closest('.modal');
+                    closeModal(modal);
+                });
+            });
+        
+            // Close modal when clicking outside of it
+            window.addEventListener('click', function(event) {
+                document.querySelectorAll('.modal').forEach(modal => {
+                    if (event.target === modal) {
+                        closeModal(modal);
+                    }
+                });
+            });
+        
+            function openModal(modalId) {
+                const modal = document.getElementById(modalId);
+                if (modal) {
+                    modal.style.display = 'block';
+                }
+            }
+        
+            function closeModal(modal) {
+                if (modal) {
+                    modal.style.display = 'none';
+                }
+            }
+        
+            function scrollPortfolio(direction) {
+                const portfolioList = document.getElementById('portfolio-list');
+                const scrollAmount = 320; // Adjust based on your design and item width
+                const leftButton = document.getElementById('left-button');
+                const rightButton = document.getElementById('right-button');
+                if (direction === 'left') {
+                    portfolioList.scrollBy({ left: -scrollAmount, behavior: 'smooth' });
+                    rightButton.style.display = 'block'; // Ensure right button is visible
+                    setTimeout(() => {
+                        if (portfolioList.scrollLeft === 0) {
+                            leftButton.style.display = 'none';
+                        }
+                    }, 500);
+                } else if (direction === 'right') {
+                    portfolioList.scrollBy({ left: scrollAmount, behavior: 'smooth' });
+                    leftButton.style.display = 'block'; // Show left button on scroll right
+                }
+            }
+        });
+        </script>
+        
+    <main>
+        <section id="home">
+            <div class="content">
+                <div class="text-content">
+                    <h1 class="heading">AppRays Limited</h1>
+                    <p>Since 2016, App Rays Limited has transformed ideas into successful digital products through expert development, market research, and clear communication.</p>
+                    <a href="#" id="consultation-icon" class="button">
+                        <img src="images/consultation.png" alt="Consultation Icon" class="button-icon"> Book A Free Consultation
+                    </a>
+                    <p class="ideas">Let us turn your ideas to reality!</p>
+                </div>
+            </div>
+        </section>
+        <section class="icon-section">
+            <div class="icons">
+                <div class="icon">
+                    <img src="images/Android Studio.png" alt="Android Studio">
+                </div>
+                <div class="icon">
+                    <img src="images/Flutter.png" alt="Flutter">
+                </div>
+                <div class="icon">
+                    <img src="images/GitHub.png" alt="GitHub">
+                </div>
+                <div class="icon">
+                    <img src="images/Java.png" alt="Java">
+                </div>
+                <div class="icon">
+                    <img src="images/Python.png" alt="Python">
+                </div>
+                <div class="icon">
+                    <img src="images/React.png" alt="React">
+                </div>
+                <div class="icon">
+                    <img src="images/Visual Studio Code 2019.png" alt="Visual Studio Code 2019">
+                </div>
+                <div class="icon">
+                    <img src="images/Android Studio.png" alt="Android Studio">
+                </div>
+                <div class="icon">
+                    <img src="images/Flutter.png" alt="Flutter">
+                </div>
+                <div class="icon">
+                    <img src="images/Google Firebase Console.png" alt="Android Studio">
+                </div>
+                <!-- Duplicate the icons for continuous scroll -->
+                <div class="icon">
+                    <img src="images/Python.png" alt="Android Studio">
+                </div>
+                <div class="icon">
+                    <img src="images/Flutter.png" alt="Flutter">
+                </div>
+                <div class="icon">
+                    <img src="images/GitHub.png" alt="GitHub">
+                </div>
+                <div class="icon">
+                    <img src="images/Java.png" alt="Java">
+                </div>
+                <div class="icon">
+                    <img src="images/Python.png" alt="Python">
+                </div>
+                <div class="icon">
+                    <img src="images/React.png" alt="React">
+                </div>
+                <div class="icon">
+                    <img src="images/Visual Studio Code 2019.png" alt="Visual Studio Code 2019">
+                </div>
+                <div class="icon">
+                    <img src="images/Android Studio.png" alt="Android Studio">
+                </div>
+                <div class="icon">
+                    <img src="images/Flutter.png" alt="Flutter">
+                </div>
+                <div class="icon">
+                    <img src="images/Android Studio.png" alt="Android Studio">
+                </div>
+            </div>
+        </section>
+        <section id="services">
+            <h2 id="services-heading">Our Services</h2>
+            <p class="subheading">We develop digital products ranging from app development and web design to product design, specifically tailored to suit our customers’ requirements.</p>
+            <div class="service-item">
+                <img src="images/webdev.png" alt="Service Image">
+                <div class="service-content">
+                    <h3 id="web-dev-heading">Web Development</h3>
+                    <p>Our tech-savvy team excels in using popular frameworks such as HTML5, CSS3, Bootstrap, and ReactJS to develop engaging websites with modern designs that provide an intuitive user experience. We ensure responsiveness, cross-browser compatibility, and optimized performance.</p>
+                    <div class="service-icons">
+                        <img src="images/React.png" alt="Icon 1">
+                        <img src="images/Java.png" alt="Icon 2">
+                        <img src="images/Visual Studio Code 2019.png" alt="Icon 3">
+                        <img src="images/GitHub.png" alt="Icon 4">
+                    </div>
+                </div>
+            </div>
+            <div class="service-item service-item-2">
+                <div class="service-content">
+                    <h3 id="app-dev-heading">App Development</h3>
+                    <p>We leverage cutting-edge technologies like Flutter and Firebase to develop top-notch apps that bring your business ideas to life and solve users' problems. Our apps provide an exceptional user-friendly experience, ensuring both functionality and satisfaction.</p>
+                    <div class="service-icons">
+                        <img src="images/Flutter.png" alt="Icon 1">
+                        <img src="images/Android Studio.png" alt="Icon 2">
+                        <img src="images/Python.png" alt="Icon 3">
+                        <img src="images/Google Firebase Console.png" alt="Icon 4">
+                    </div>
+                </div>
+                <img src="images/appdev.png" alt="Service Image">
+            </div>
+            <div class="service-item">
+                <img src="images/proddesign.png" alt="Service Image">
+                <div class="service-content">
+                    <h3 id="prod-design-heading">Product Design</h3>
+                    <p>Our product design service focuses on creating visually stunning and user-centric designs that elevate your product's appeal and usability. We use a holistic approach to ensure your product not only looks great but also provides an outstanding user experience.</p>
+                    <div class="service-icons">
+                        <img src="images/Figma.png" alt="Icon 1">
+                        <img src="images/Adobe After Effects.png" alt="Icon 2">
+                        <img src="images/Sketch.png" alt="Icon 3">
+                        <img src="images/Adobe XD.png" alt="Icon 4">
+                    </div>
+                </div>
+            </div>
+            <div class="service-item service-item-4">
+                <img src="images/appdev.png" alt="Service Image">
+                <div class="service-content">
+                    <h3 id="prod-design-heading">App Development</h3>
+                    <p>We leverage cutting-edge technologies like Flutter and Firebase to develop top-notch apps that bring your business ideas to life and solve users' problems. Our apps provide an exceptional user-friendly experience, ensuring both functionality and satisfaction.</p>
+                    <div class="service-icons">
+                        <img src="images/Flutter.png" alt="Icon 1">
+                        <img src="images/Android Studio.png" alt="Icon 2">
+                        <img src="images/Python.png" alt="Icon 3">
+                        <img src="images/Google Firebase Console.png" alt="Icon 4">
+                    </div>
+                </div>
+            </div>
+        </section>
+        
+        <script>
+            document.addEventListener('DOMContentLoaded', function() {
+                const getQuoteButton = document.getElementById('get-quote-button');
+                const consultationIcon = document.getElementById('consultation-icon'); // Ensure this ID matches your image ID
+                const modal = document.getElementById('get-quote-modal');
+                const closeButton = document.getElementById('close-button');
+                const overlay = document.getElementById('overlay');
+            
+                // Explicitly hide the modal on initial load
+                modal.style.display = 'none'; // Ensure modal is hidden when the page loads
+            
+                // Function to open modal
+                function openModal() {
+                    modal.style.display = 'flex';
+                    overlay.style.display = 'block'; // Show overlay when modal is open
+                }
+            
+                // Open modal with button
+                getQuoteButton.addEventListener('click', function(event) {
+                    event.preventDefault();
+                    openModal();
+                });
+            
+                // Open modal with consultation icon
+                consultationIcon.addEventListener('click', function() {
+                    openModal();
+                });
+            
+                // Function to close modal on close button click
+                closeButton.addEventListener('click', function() {
+                    modal.style.display = 'none';
+                    overlay.style.display = 'none'; // Hide overlay when modal is closed
+                });
+            
+                // Function to close modal when clicking outside of it
+                window.addEventListener('click', function(event) {
+                    if (event.target === modal) {
+                        modal.style.display = 'none';
+                        overlay.style.display = 'none'; // Hide overlay when clicking outside modal
+                    }
+                });
+            
+                // Mobile Drawer Toggle Functionality
+                const menuIcon = document.getElementById('menu-icon');
+                const mobileDrawer = document.getElementById('mobile-drawer');
+            
+                menuIcon.addEventListener('click', function() {
+                    if (mobileDrawer.style.right === '0px') {
+                        mobileDrawer.style.right = '-250px';
+                        overlay.style.display = 'none';
+                    } else {
+                        mobileDrawer.style.right = '0';
+                        overlay.style.display = 'block'; // Show overlay when mobile drawer is open
+                    }
+                });
+            
+                overlay.addEventListener('click', function() {
+                    mobileDrawer.style.right = '-250px';
+                    overlay.style.display = 'none'; // Hide overlay when mobile drawer is closed
+                });
+            
+                // Button Selection Functionality
+                document.querySelectorAll('.interest-button').forEach(button => {
+                    button.addEventListener('click', () => {
+                        document.querySelectorAll('.interest-button').forEach(btn => btn.classList.remove('selected'));
+                        button.classList.add('selected');
+                    });
+                });
+            
+                // Intersection Observer for animations
+                const observerOptions = {
+                    root: null,
+                    rootMargin: '0px',
+                    threshold: 0.1
+                };
+            
+                const observer = new IntersectionObserver((entries, observer) => {
+                    entries.forEach(entry => {
+                        if (entry.isIntersecting) {
+                            entry.target.classList.add('animate');
+                            observer.unobserve(entry.target);
+                        }
+                    });
+                }, observerOptions);
+            
+                const targets = document.querySelectorAll('#services-heading, #services p.subheading, .service-item');
+                targets.forEach(target => observer.observe(target));
+            });
+        </script>
+
+<section id="portfolio">
+    <div class="upper-section">
+        <h2 id="portfolio-heading" class="animate">Our Portfolio</h2>
+        <p class="portfolio-subheading animate">
+            Our <span class="highlight-digital">digital</span> products for <span class="highlight-ios">iOS</span>, <span class="highlight-android">Android</span>, and <span class="highlight-web">Web</span> have exceeded <span class="highlight-users">300,000</span> downloads and <span class="highlight-users">users</span> in just a few years.</p>
+        <a href="#" id="get-consultation-button" class="get-consultation-button animate" data-modal="consultation-modal">
+            <img src="images/Chat.png" alt="Consultation Icon" class="button-icon small-image">
+            Get a Free Consultation
+        </a>       
+    </div>
+    <div class="lower-section">
+        <div class="portfolio-list" id="portfolio-list">
+            <div class="portfolio-item animate">
+                <div class="portfolio-item-header">
+                    <div class="icon-rectangle" style="background-color: #FF4500; top: 140px;">
+                        <img src="images/Student.png" alt="Icon" class="rectangle-icon"> <!-- Your icon here -->
+                    </div>
+                    <img src="images/Muqabla.png" alt="Muqabla - CSS Exam Prep">
+                </div>
+                <div class="portfolio-item-content">
+                    <span>18 Jun, 2017</span>
+                    <h3>Muqabla - CSS Exam Prep</h3>
+                    <p>Muqabla App is designed to assist students in preparing for the CSS Exam, officially known as the Central Superior Services Exam, conducted nationwide by the FPSC (Federal Public Service Commission) in Pakistan. Please note that Muqabla is neither endorsed by nor affiliated with FPSC or the CSS Exam. Our app has achieved over a 90% success rate and is used by more than 200,000 students globally.</p>
+                    <div class="portfolio-buttons">
+                        <div class="icon-button">
+                            <img src="images/Flutter.png" alt="Flutter"> Flutter
+                        </div>
+                        <div class="icon-button">
+                            <img src="images/Figma.png" alt="Figma"> Figma
+                        </div>
+                        <div class="icon-button">
+                            <img src="images/Google Firebase Console.png" alt="Firebase"> Firebase
+                        </div>
+                    </div>
+                    <a href="https://muqabla.io/" class="read-more" target="_blank" rel="noopener noreferrer">
+                        Read More <img src="images/Arrow.png" alt="Arrow">
+                    </a>
+                    </div>
+            </div>
+            <div class="portfolio-item animate">
+                <div class="portfolio-item-header">
+                    <div class="icon-rectangle" style="background-color: #FFD700; top: 140px;">
+                        <img src="images/Business.png" alt="Icon" class="rectangle-icon"> <!-- Your icon here -->
+                    </div>
+                    <img src="images/iinvest.png" alt="I-Invest: Pakistan’s First Stock Trading App">
+                </div>
+                <div class="portfolio-item-content">
+                    <span>18 Jun, 2016</span>
+                    <h3>I-Invest: Pakistan’s First Stock Tracking App</h3>
+                    <p>In 2016, AppRays made history by launching I-Invest, Pakistan's first comprehensive stock tracking app. Gaining rapid popularity for its user-friendly interface and real-time market data, it achieved over 100,000 downloads, received more than 500 positive reviews, and maintained an impressive 4.5-star rating on the App Store. I-Invest was successfully sold to a larger financial firm in 2021.</p>
+                    <div class="portfolio-buttons">
+                        <div class="icon-button">
+                            <img src="images/Flutter.png" alt="Flutter"> Flutter
+                        </div>
+                        <div class="icon-button">
+                            <img src="images/Figma.png" alt="Figma"> Figma
+                        </div>
+                        <div class="icon-button">
+                            <img src="images/Google Firebase Console.png" alt="Firebase"> Firebase
+                        </div>
+                    </div>
+                    <a href="https://www.facebook.com/psxexchange/" class="read-more" target="_blank" rel="noopener noreferrer">
+                        Read More <img src="images/Arrow.png" alt="Arrow">
+                    </a>                </div>
+            </div>
+            <div class="portfolio-item animate">
+                <div class="portfolio-item-header">
+                    <div class="icon-rectangle" style="background-color: #1E90FF; top: 140px;">
+                        <img src="images/bag.png" alt="Icon" class="rectangle-icon"> <!-- Your icon here -->
+                    </div>
+                    <img src="images/podapp.png" alt="POD App: Neurodiverse Children Care">
+                </div>
+                <div class="portfolio-item-content">
+                    <span>18 Jun, 2023</span>
+                    <h3>POD App: Neurodiverse Children Care</h3>
+                    <p>AppRays designed and developed a comprehensive health app tailored to manage neurodiverse children's health data within a single, user-friendly platform. As the primary developer for this project, AppRays created the app for a client in the US. The app enables seamless sharing of health data with a single click, facilitating collaboration with doctors and therapists and ensuring easy access to health information for all.</p>
+                    <div class="portfolio-buttons">
+                        <div class="icon-button">
+                            <img src="images/Flutter.png" alt="Flutter"> Flutter
+                        </div>
+                        <div class="icon-button">
+                            <img src="images/Figma.png" alt="Figma"> Figma
+                        </div>
+                        <div class="icon-button">
+                            <img src="images/Google Firebase Console.png" alt="Firebase"> Firebase
+                        </div>
+                    </div>
+                    <a href="https://www.podhealth.ai/" class="read-more" target="_blank" rel="noopener noreferrer">
+                        Read More <img src="images/Arrow.png" alt="Arrow">
+                    </a>
+                                    </div>
+            </div>
+            <div class="portfolio-item animate">
+                <div class="portfolio-item-header">
+                    <div class="icon-rectangle" style="background-color: #32CD32; top: 140px;">
+                        <img src="images/Apps Tab.png" alt="Icon" class="rectangle-icon"> <!-- Your icon here -->
+                    </div>
+                    <img src="images/farm.png" alt="FarmMaster- Manage Your Farm">
+                </div>
+                <div class="portfolio-item-content">
+                    <span>18 July, 2024</span>
+                    <h3>FarmMaster- Manage Your Farm</h3>
+                    <p>AppRays is pleased to announce the development of a cutting-edge farm management mobile application. This innovative tool enables farm owners to track sales and manage detailed information about their livestock. Utilizing QR code technology, users can easily access and monitor crucial data, thus enhancing operational efficiency and streamlining farm management processes for optimal performance.</p>
+                    <div class="portfolio-buttons">
+                        <div class="icon-button">
+                            <img src="images/Flutter.png" alt="Flutter"> Flutter
+                        </div>
+                        <div class="icon-button">
+                            <img src="images/Figma.png" alt="Figma"> Figma
+                        </div>
+                        <div class="icon-button">
+                            <img src="images/Google Firebase Console.png" alt="Firebase"> Firebase
+                        </div>
+                    </div>
+                    <a href="#more" class="read-more">Coming Soon</a>
+                </div>
+            </div>
+        </div>
+        <div class="carousel-buttons">
+            <button class="carousel-button left" id="left-button" onclick="scrollPortfolio('left')">&lt;</button>
+            <button class="carousel-button right" id="right-button" onclick="scrollPortfolio('right')">&gt;</button>
+        </div>
+    </div>
+</section>
+        <script>
+            function scrollPortfolio(direction) {
+                const portfolioList = document.getElementById('portfolio-list');
+                const scrollAmount = 320; // Adjust based on your design and item width
+                const leftButton = document.getElementById('left-button');
+                const rightButton = document.getElementById('right-button');
+            
+                if (direction === 'left') {
+                    portfolioList.scrollBy({ left: -scrollAmount, behavior: 'smooth' });
+                    rightButton.style.display = 'block'; // Ensure right button is visible
+                    setTimeout(() => {
+                        if (portfolioList.scrollLeft === 0) {
+                            leftButton.style.display = 'none';
+                        }
+                    }, 500);
+                } else if (direction === 'right') {
+                    portfolioList.scrollBy({ left: scrollAmount, behavior: 'smooth' });
+                    leftButton.style.display = 'block'; // Show left button on scroll right
+                }
+            }
+        
+            function openModal(modalId) {
+                const modal = document.getElementById(modalId);
+                if (modal) {
+                    modal.style.display = 'block';
+                }
+            }
+        
+            function closeModal(modal) {
+                if (modal) {
+                    modal.style.display = 'none';
+                }
+            }
+        
+            document.addEventListener("DOMContentLoaded", function () {
+                // Intersection Observer for animations
+                const observer = new IntersectionObserver((entries, observer) => {
+                    entries.forEach(entry => {
+                        if (entry.isIntersecting) {
+                            entry.target.classList.add('animate-visible');
+                            observer.unobserve(entry.target);
+                        }
+                    });
+                }, { threshold: 0.1 });
+        
+                document.querySelectorAll('.animate').forEach(element => {
+                    observer.observe(element);
+                });
+        
+                // Event listeners for buttons that open modals
+                document.querySelectorAll('[data-modal]').forEach(button => {
+                    button.addEventListener('click', function(e) {
+                        e.preventDefault();
+                        const modalId = this.getAttribute('data-modal');
+                        openModal(modalId);
+                    });
+                });
+        
+                // Event listeners for close buttons inside modals
+                document.querySelectorAll('.modal .close').forEach(closeBtn => {
+                    closeBtn.addEventListener('click', function() {
+                        const modal = this.closest('.modal');
+                        closeModal(modal);
+                    });
+                });
+        
+                // Close modal when clicking outside of it
+                window.addEventListener('click', function(event) {
+                    document.querySelectorAll('.modal').forEach(modal => {
+                        if (event.target === modal) {
+                            closeModal(modal);
+                        }
+                    });
+                });
+            });
+            
+        </script>    
+        <section id="testimonial">
+            <div class="testimonial-header">
+                <h2>What do our <span class="highlight">users</span> say?</h2>
+                <p>Discover the experiences and <span class="highlight">feedback</span> from our satisfied <span class="highlight">clients</span>.</p>
+            </div>
+            <div class="testimonial-carousel">
+                <div class="testimonial-list" id="testimonial-list">
+                    <div class="testimonial-item">
+                        <div class="testimonial-content">
+                            <div class="rating">
+                                &#9733;&#9733;&#9733;&#9733;&#9733;
+                            </div>
+                            <span class="date">1 month ago</span>
+                            <p>"Muqabla app was a game-changer for me! The app provides an extensive collection of past papers and helpful resources for CSS aspirants. It played a crucial role in helping me crack the CSS exam."</p>
+                            <div class="user-info">
+                                <img src="images/alam.jpeg" alt="User">
+                                <div class="user-details">
+                                    <span class="user-name">Ahmad Alam.</span>
+                                    <span class="user-title">CSS 2023 Qualifier.</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="testimonial-item">
+                        <div class="testimonial-content">
+                            <div class="rating">
+                                &#9733;&#9733;&#9733;&#9733;&#9733;
+                            </div>
+                            <span class="date">2 months ago</span>
+                            <p>"Working with AppRays on our health app for neurodiverse children was a fantastic experience. They delivered a product that exceeded our expectations and assisted us from MVP to launch."</p>
+                            <div class="user-info">
+                                <img src="images/mohammed farooq.jpg" alt="User">
+                                <div class="user-details">
+                                    <span class="user-name">Mohammed Farooq.</span>
+                                    <span class="user-title">POD Health GenAI Technologist.</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="testimonial-item">
+                        <div class="testimonial-content">
+                            <div class="rating">
+                                &#9733;&#9733;&#9733;&#9733;&#9733;
+                            </div>
+                            <span class="date">3 months ago</span>
+                            <p>"Muqabla CSS Companion is great for finding consolidated MCQs and resources for all subjects in one place, especially economics, as I've had trouble finding good resources elsewhere."</p>
+                            <div class="user-info">
+                                <img src="images/shireen gul.jpg" alt="User">
+                                <div class="user-details">
+                                    <span class="user-name">Shireen Gul.</span>
+                                    <span class="user-title">Assistant Commissioner.</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="write-review">
+                <a href="https://play.google.com/store/apps/details?id=apprays.muqabla&hl=en" target="_blank" rel="noopener noreferrer">
+                    <button>Read More Reviews</button>
+                </a>
+                            </div>
+        </section>
+        
+
+        <script>
+            document.addEventListener('DOMContentLoaded', function() {
+                const observerOptions = {
+                    root: null,
+                    rootMargin: '0px',
+                    threshold: 0.1
+                };
+        
+                const observer = new IntersectionObserver((entries, observer) => {
+                    entries.forEach(entry => {
+                        if (entry.isIntersecting) {
+                            entry.target.classList.add('animate');
+                            observer.unobserve(entry.target);
+                        }
+                    });
+                }, observerOptions);
+        
+                const targets = document.querySelectorAll('.testimonial-header h2, .testimonial-header p, .testimonial-item');
+                targets.forEach(target => observer.observe(target));
+            });
+        </script>
+        
+        
+        <script>
+        function scrollTestimonial(direction) {
+            const testimonialList = document.getElementById('testimonial-list');
+            const scrollAmount = direction === 'left' ? -300 : 300;
+            testimonialList.scrollBy({ left: scrollAmount, behavior: 'smooth' });
+        }
+        </script>
+            
+            <section class="team-section" id="team">
+                <h1 class="animate">Meet Our <span>Team</span></h1>
+                <p class="animate">
+                    At <span class="highlight-blue">AppRays</span>, our <span class="highlight-green">team</span>, with over <span class="highlight-orange">10</span> years of experience, is determined to positively impact clients through innovation and responsibility.
+                </p>
+                <div class="team-lead animate" 
+                     data-bio="Amir Siddique is the founder and CEO of AppRays. With over 15 years of software experience, he singlehandedly coded the initial versions of the Muqabla CSS Companion App and I-Invest, laying the foundation for AppRays. Amir also leads an Introduction to Programming Fundamentals course, teaching Flutter and Firebase at LUMS university Lahore. Amir is also an avid reader and has a library set up at the office."
+                     data-linkedin="https://www.linkedin.com/in/amirsiddi/?originalSubdomain=pk" 
+                     data-xurl="https://x.com/amirsiddi?lang=en">
+                    <img src="images/amir.png" alt="CEO">
+                    <h2>Amir Siddique</h2>
+                    <p>FOUNDER & CEO</p>
+                    <div class="social-icons">
+                        <a href="https://x.com/amirsiddi?lang=en" target="_blank"><img src="images/xicon.png" alt="Twitter"></a>
+                        <a href="https://www.linkedin.com/in/amirsiddi/?originalSubdomain=pk" target="_blank"><img src="images/LinkedIn.png" alt="LinkedIn"></a>
+                    </div>
+                </div>
+                <div class="team-members">
+                    <div class="team-member animate" 
+                         data-name="Abdul Mannan" 
+                         data-role="COO" 
+                         data-image="images/mannan.jpeg" 
+                         data-bio="Abdul Mannan is the Chief Operating Officer at AppRays. He manages all operations of the Muqabla App, including tracking sales and managing subscriptions. Mannan has also spent a few years in the US."
+                         data-linkedin="https://www.linkedin.com/in/abdul-mannan-220b2263/" 
+                         data-xurl="">
+                        <img src="images/mannan.jpeg" alt="Employee 1">
+                        <h3>Abdul Mannan</h3>
+                        <p>COO</p>
+                        <div class="social-icons">
+                            <a href="https://www.linkedin.com/in/abdul-mannan-220b2263/" target="_blank"><img src="images/LinkedIn.png" alt="LinkedIn"></a>
+                        </div>
+                    </div>
+                    <div class="team-member animate" 
+                         data-name="Shariq Shmeer" 
+                         data-role="Full Stack Developer" 
+                         data-image="images/shariq.jpeg" 
+                         data-bio="Shariq, a CS graduate from Sadiqabad, worked on the POD Health App for AppRays, collaborating on its development. He is currently solely responsible for developing the redesign of the Muqabla App and developing the farm app for the company."
+                         data-linkedin="https://www.linkedin.com/in/shariqshmeer01/" 
+                         data-xurl="">
+                        <img src="images/shariq.jpeg" alt="Employee 2">
+                        <h3>Shariq Shmeer</h3>
+                        <p>Full Stack Developer</p>
+                        <div class="social-icons">
+                            <a href="https://www.linkedin.com/in/shariqshmeer01/" target="_blank"><img src="images/LinkedIn.png" alt="LinkedIn"></a>
+                        </div>
+                    </div>
+                    <div class="team-member animate" 
+                         data-name="Abdul Dayyan" 
+                         data-role="CTO, Full Stack Developer" 
+                         data-image="images/dyyan.jpeg" 
+                         data-bio="Dayyan graduated with a CS degree from the University of Central Punjab in Lahore. He has been with the company since 2022, working tirelessly on various projects. Dayyan has solely developed the hostel app, set to go live soon, which will allow students to easily find hostels near them. He has also contributed significantly to the POD Health App."
+                         data-linkedin="https://www.linkedin.com/in/abdul-dayyan/" 
+                         data-xurl="">
+                        <img src="images/dyyan.jpeg" alt="Employee 3">
+                        <h3>Abdul Dayyan</h3>
+                        <p>CTO, Full Stack Developer</p>
+                        <div class="social-icons">
+                            <a href="https://www.linkedin.com/in/abdul-dayyan/" target="_blank"><img src="images/LinkedIn.png" alt="LinkedIn"></a>
+                        </div>
+                    </div>
+                    <div class="team-member animate" 
+                         data-name="Sagar Shabbir" 
+                         data-role="Designer and Developer" 
+                         data-image="images/sagar.png" 
+                         data-bio="Sagar is an A-level graduate from Azad Kashmir, Pakistan. He works full-time at AppRays as a developer and designer and was a former Flutter course student. He designed and coded the AppRays website from scratch. In 2019, he received a fully funded scholarship to attend an exchange program in the US. Sagar also manages operations at a free public library in Lahore called Kitab Ghar."
+                         data-linkedin="https://www.linkedin.com/in/sagar-shabbir-1b1a61164" 
+                         data-xurl="https://x.com/saagarshabbir?lang=en">
+                        <img src="images/sagar.png" alt="Employee 4">
+                        <h3>Sagar Shabbir</h3>
+                        <p>Designer and Developer</p>
+                        <div class="social-icons">
+                            <a href="https://x.com/saagarshabbir?lang=en" target="_blank"><img src="images/xicon.png" alt="Twitter"></a>
+                            <a href="https://www.linkedin.com/in/sagar-shabbir-1b1a61164" target="_blank"><img src="images/LinkedIn.png" alt="LinkedIn"></a>
+                        </div>
+                    </div>
+                    <div class="team-member animate" 
+                         data-name="Malik Nawfal" 
+                         data-role="Product Designer" 
+                         data-image="images/nawfal.jpg" 
+                         data-bio="Nawfal is an A-level graduate from Aitchison College, Lahore, and is set to start his bachelor's in Computer Science at LUMS. He works at AppRays as a product designer and has redesigned the Muqabla CSS Companion App. Nawfal was also a former course student and spent a year in Turkey doing rigorous courses."
+                         data-linkedin="https://www.linkedin.com/in/malik-nawfal-mahmood-4437aa263/" 
+                         data-xurl="">
+                        <img src="images/nawfal.jpg" alt="Employee 5">
+                        <h3>Malik Nawfal</h3>
+                        <p>Product Designer</p>
+                        <div class="social-icons">
+                            <a href="https://www.linkedin.com/in/malik-nawfal-mahmood-4437aa263/" target="_blank"><img src="images/LinkedIn.png" alt="LinkedIn"></a>
+                        </div>
+                    </div>
+                    <div class="team-member animate" 
+                         data-name="Aisha Daudpota" 
+                         data-role="Designer and Developer" 
+                         data-image="images/aisha.png" 
+                         data-bio="Aisha is from Karachi and holds a bachelor's degree in Computer Science from Virtual University. She has worked with AppRays for the past two years. Initially working on the Muqabla App redesign, she also coded version 2.0 of the Muqabla App and contributed to the development of the Pod Health App."
+                         data-linkedin="https://www.linkedin.com/in/aisha-daud-pota-046b4bb7/" 
+                         data-xurl="">
+                        <img src="images/aisha.png" alt="Employee 6">
+                        <h3>Aisha Daudpota</h3>
+                        <p>Designer and Developer</p>
+                        <div class="social-icons">
+                            <a href="https://www.linkedin.com/in/aisha-daud-pota-046b4bb7/" target="_blank"><img src="images/LinkedIn.png" alt="LinkedIn"></a>
+                        </div>
+                    </div>
+                </div>
+            </section>
+            
+            <!-- Team Member Detail Lightbox -->
+            <div id="team-detail-lightbox" class="lightbox">
+                <div class="lightbox-content">
+                    <span class="close-button">&times;</span>
+                    <img id="lightbox-image" src="" alt="Team Member Photo" class="lightbox-image">
+                    <h2 id="lightbox-name"></h2>
+                    <p id="lightbox-role"></p>
+                    <p id="lightbox-bio"></p>
+                    <div id="lightbox-social-icons" class="lightbox-social-icons">
+                        <!-- Social icons will be dynamically inserted here -->
+                    </div>
+                </div>
+            </div>
+            <script>
+                document.addEventListener("DOMContentLoaded", function() {
+                    const teamLead = document.querySelector('.team-lead');
+                    const teamMembers = document.querySelectorAll('.team-member');
+                    const lightbox = document.querySelector('.lightbox');
+                    const lightboxContent = {
+                        image: document.getElementById("lightbox-image"),
+                        name: document.getElementById("lightbox-name"),
+                        role: document.getElementById("lightbox-role"),
+                        bio: document.getElementById("lightbox-bio"),
+                        socialIcons: document.getElementById("lightbox-social-icons")
+                    };
+            
+                    // Function to populate lightbox and show it
+                    function showLightbox(name, position, imageSrc, linkedIn, xUrl, bio) {
+                        // Set lightbox content
+                        lightboxContent.image.src = imageSrc;
+                        lightboxContent.name.textContent = name;
+                        lightboxContent.role.textContent = position;
+                        lightboxContent.bio.textContent = bio;
+                        
+                        // Clear existing social icons
+                        lightboxContent.socialIcons.innerHTML = '';
+            
+                        // Prepare social links if they are available
+                        if (linkedIn) {
+                            const linkedInLink = document.createElement('a');
+                            linkedInLink.href = linkedIn;
+                            linkedInLink.target = "_blank";
+                            const linkedInIcon = document.createElement('img');
+                            linkedInIcon.src = "images/LinkedIn.png";
+                            linkedInIcon.alt = "LinkedIn";
+                            linkedInLink.appendChild(linkedInIcon);
+                            lightboxContent.socialIcons.appendChild(linkedInLink);
+                        }
+            
+                        if (xUrl) {
+                            const xLink = document.createElement('a');
+                            xLink.href = xUrl;
+                            xLink.target = "_blank";
+                            const xIcon = document.createElement('img');
+                            xIcon.src = "images/xicon.png";
+                            xIcon.alt = "X";
+                            xLink.appendChild(xIcon);
+                            lightboxContent.socialIcons.appendChild(xLink);
+                        }
+            
+                        // Show the lightbox
+                        lightbox.style.display = 'flex';
+            
+                        // Close button functionality
+                        lightbox.querySelector('.close-button').onclick = function() {
+                            lightbox.style.display = 'none';
+                        };
+                    }
+            
+                    // Event listener for the CEO section
+                    teamLead.addEventListener('click', function() {
+                        const name = this.querySelector('h2').innerText;
+                        const position = this.querySelector('p').innerText;
+                        const imageSrc = this.querySelector('img').src;
+                        const linkedIn = this.getAttribute('data-linkedin'); // Retrieve LinkedIn URL
+                        const xUrl = this.getAttribute('data-xurl'); // Retrieve X URL
+                        const bio = this.getAttribute('data-bio'); // Retrieve the bio for the CEO
+            
+                        showLightbox(name, position, imageSrc, linkedIn, xUrl, bio);
+                    });
+            
+                    // Event listeners for each team member
+                    teamMembers.forEach(member => {
+                        member.addEventListener('click', function() {
+                            const name = this.querySelector('h3').innerText;
+                            const position = this.querySelector('p').innerText;
+                            const imageSrc = this.querySelector('img').src;
+                            const linkedIn = this.getAttribute('data-linkedin'); // Retrieve LinkedIn URL
+                            const xUrl = this.getAttribute('data-xurl'); // Retrieve X URL
+                            const bio = this.getAttribute('data-bio'); // Retrieve the bio from data attribute
+            
+                            showLightbox(name, position, imageSrc, linkedIn, xUrl, bio);
+                        });
+                    });
+            
+                    // Click outside to close
+                    window.addEventListener('click', function(event) {
+                        if (event.target === lightbox) {
+                            lightbox.style.display = 'none';
+                        }
+                    });
+                });
+            </script>
+                        
+
+            
+                
+<section id="faq">
+    <div class="faq-content">
+        <h2>Frequently Asked Questions</h2>
+        
+        <div class="faq-item">
+            <div class="faq-question">
+                <span class="faq-icon">></span>
+                <h3>How long does software development take?</h3>
+            </div>
+            <div class="faq-answer">
+                <p>The estimated time frame for each project depends on its complexity. It could take from 4 weeks to up to a year depending on the client’s requirements.</p>
+            </div>
+        </div>
+        
+        <div class="faq-item">
+            <div class="faq-question">
+                <span class="faq-icon">></span>
+                <h3>What are the benefits of working with Apprays?</h3>
+            </div>
+            <div class="faq-answer">
+                <p>After creating a detailed report of our client’s requirements, our expert team makes sure to provide excellent products to empower your business. We have trained and committed managers that ensure quality control and timely delivery.</p>
+            </div>
+        </div>
+        
+        <div class="faq-item">
+            <div class="faq-question">
+                <span class="faq-icon">></span>
+                <h3>What technology do we use?</h3>
+            </div>
+            <div class="faq-answer">
+                <p>We use popular front-end frameworks such as Flutter and React for modern development. For the backend, we use powerful technologies like Firebase and Django.</p>
+            </div>
+        </div>
+        
+        <div class="faq-item">
+            <div class="faq-question">
+                <span class="faq-icon">></span>
+                <h3>Do you provide ongoing support after project completion?</h3>
+            </div>
+            <div class="faq-answer">
+                <p>Yes, Apprays offers ongoing support and maintenance services to ensure your software continues to perform optimally after deployment.</p>
+            </div>
+        </div>
+        
+        <div class="faq-item">
+            <div class="faq-question">
+                <span class="faq-icon">></span>
+                <h3>Can Apprays handle large-scale enterprise projects?</h3>
+            </div>
+            <div class="faq-answer">
+                <p>Yes, our team is equipped to handle large-scale enterprise projects with complex requirements and extensive functionalities.</p>
+            </div>
+        </div>
+        
+        <div class="faq-item">
+            <div class="faq-question">
+                <span class="faq-icon">></span>
+                <h3>How do I get a quote for my project?</h3>
+            </div>
+            <div class="faq-answer">
+                <p>You can get a quote for your project by contacting us through our website's contact form, emailing us directly, or giving us a call. We will review your requirements and provide a detailed estimate.</p>
+            </div>
+        </div>
+        
+        <div class="faq-item">
+            <div class="faq-question">
+                <span class="faq-icon">></span>
+                <h3>What industries do you specialize in?</h3>
+            </div>
+            <div class="faq-answer">
+                <p>We specialize in a variety of industries including healthcare, finance, education, e-commerce, and more. Our diverse expertise allows us to cater to a wide range of business needs.</p>
+            </div>
+        </div>
+        
+        <div class="faq-item">
+            <div class="faq-question">
+                <span class="faq-icon">></span>
+                <h3>Can Apprays help with digital transformation?</h3>
+            </div>
+            <div class="faq-answer">
+                <p>Yes, we offer digital transformation services to help businesses modernize their operations, improve efficiency, and stay competitive in the digital age.</p>
+            </div>
+        </div>
+        
+        <div class="faq-item">
+            <div class="faq-question">
+                <span class="faq-icon">></span>
+                <h3>What is your development process?</h3>
+            </div>
+            <div class="faq-answer">
+                <p>Our development process includes requirement analysis, design, development, testing, deployment, and ongoing support. We follow agile methodologies to ensure flexibility and client satisfaction.</p>
+            </div>
+        </div>
+        
+        <div class="faq-item">
+            <div class="faq-question">
+                <span class="faq-icon">></span>
+                <h3>How do I contact customer support?</h3>
+            </div>
+            <div class="faq-answer">
+                <p>You can contact Apprays customer support through the contact form on our website, by emailing us at support@apprays.com, or by calling our support hotline. Our team is ready to assist you with any questions or concerns.</p>
+            </div>
+        </div>
+    </div>
+</section>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        // Intersection Observer setup for animations
+        const observerOptions = {
+            root: null,
+            rootMargin: '0px',
+            threshold: 0.1
+        };
+
+        const observer = new IntersectionObserver((entries, observer) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.classList.add('animate');
+                    observer.unobserve(entry.target);
+                }
+            });
+        }, observerOptions);
+
+        // Select all FAQ items and the FAQ heading for observation
+        const targets = document.querySelectorAll('#faq h2, .faq-item');
+        targets.forEach(target => observer.observe(target));
+
+        // FAQ toggle functionality
+        const faqItems = document.querySelectorAll('.faq-item');
+
+        faqItems.forEach(function(item) {
+            item.addEventListener('click', function(event) {
+                event.preventDefault(); // Prevent default click behavior
+
+                // Close all other FAQ items
+                faqItems.forEach(function(otherItem) {
+                    if (otherItem !== item) {
+                        otherItem.classList.remove('active');
+                    }
+                });
+
+                // Toggle the clicked FAQ item
+                this.classList.toggle('active');
+            });
+        });
+    });
+</script>
+
+<section class="discuss-idea">
+    <div class="idea-content">
+        <h1>DISCUSS YOUR IDEA</h1>
+        <p>Schedule a free call to get personalized advice</p>
+        <button class="consultation-button" id="discuss-consultation-button" data-modal="get-quote-modal">
+            <img src="images/Chat.png" alt="Icon" class="button-icon">
+            <span>Get a Free Consultation</span>
+        </button>
+        <p>Let us help you leverage the best practices in the industry.</p>
+    </div>
+</section>
+
+<section class="contact-us" id="contact">
+    <div class="contact-container">
+        <div class="contact-form">
+            <h2 style="color: #E64A19;">Contact us</h2>
+            <p>If you have any questions or need help, please reach out to us.</p>
+            <form action="https://formspree.io/f/mvgpawzz" method="POST">
+                <label for="name">Name</label>
+                <input type="text" id="name" name="name" placeholder="Jane Sheriton" required>
+                <label for="email">Email address</label>
+                <input type="email" id="email" name="email" placeholder="email@janesfakedomain.net" required>
+                <label for="message">Your message</label>
+                <textarea id="message" name="message" placeholder="Enter your question or message" required></textarea>
+                <button type="submit">Send Message</button>
+            </form>
+        </div>
+        <div class="contact-info app-rays-limited">
+            <h2><span style="color: #224093;">AppRays</span> <span style="color: #E64A19;">Limited</span></h2>
+            <p>We're here to assist you with any questions, concerns, or feedback you may have. Please feel free to use the form to reach out, and we'll make sure to get back to you as soon as possible. Whether you need help with a project, have suggestions, or simply want to share your thoughts, we value your input and look forward to hearing from you.</p>
+            <div class="contact-social-icons">
+                <a href="https://pk.linkedin.com/company/apprays" target="_blank">
+                    <img src="images/LinkedIn (1).png" alt="LinkedIn">
+                </a>
+                <a href="https://www.facebook.com/apprays/" target="_blank">
+                    <img src="images/Facebook (1).png" alt="Facebook">
+                </a>
+                <a href="mailto:support@apprays.io"><img src="images/Gmail.png" alt="Gmail"></a>
+                <a href="https://maps.app.goo.gl/fXJg9PufoUJgTXx69" target="_blank">
+                    <img src="images/Location.png" alt="Location">
+                </a>
+        </div>
+        </div>
+    </div>
+</section>
+
+
+<script>
+    document.addEventListener("DOMContentLoaded", function () {
+        const observer = new IntersectionObserver((entries, observer) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.classList.add('animate-visible');
+                    observer.unobserve(entry.target);
+                }
+            });
+        }, { threshold: 0.1 });
+
+        document.querySelectorAll('.animate').forEach(element => {
+            observer.observe(element);
+        });
+    });
+</script>
+
+</main>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        const observerOptions = {
+            root: null,
+            rootMargin: '0px',
+            threshold: 0.1
+        };
+
+        const observer = new IntersectionObserver((entries, observer) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.classList.add('animate');
+                    observer.unobserve(entry.target);
+                }
+            });
+        }, observerOptions);
+
+        const targets = document.querySelectorAll('.discuss-idea h1, .discuss-idea p, .consultation-button, .contact-form h2, .contact-form p, .contact-form label, .contact-form input, .contact-form textarea, .contact-form button, .contact-info p, .contact-social-icons');
+        targets.forEach(target => observer.observe(target));
+    });
+</script>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        const getQuoteButton = document.getElementById('get-quote-button');
+        const consultationIcon = document.getElementById('consultation-icon');
+        const consultationButton = document.getElementById('get-consultation-button');
+        const discussConsultationButton = document.getElementById('discuss-consultation-button');
+        const modal = document.getElementById('get-quote-modal');
+        const closeButton = document.getElementById('close-button');
+        const overlay = document.getElementById('overlay');
+
+        // Ensure the modal is hidden initially
+        modal.style.display = 'none';
+
+        // Function to open modal
+        function openModal() {
+            modal.style.display = 'flex';
+            overlay.style.display = 'block'; // Show overlay when modal is open
+        }
+
+        // Open modal with get quote button
+        getQuoteButton.addEventListener('click', function(event) {
+            event.preventDefault();
+            openModal();
+        });
+
+        // Open modal with consultation icon
+        consultationIcon.addEventListener('click', function() {
+            openModal();
+        });
+
+        // Open modal with portfolio consultation button
+        consultationButton.addEventListener('click', function(event) {
+            event.preventDefault();
+            openModal();
+        });
+
+        // Open modal with discuss idea consultation button
+        discussConsultationButton.addEventListener('click', function(event) {
+            event.preventDefault();
+            openModal();
+        });
+
+        // Function to close modal on close button click
+        closeButton.addEventListener('click', function() {
+            modal.style.display = 'none';
+            overlay.style.display = 'none'; // Hide overlay when modal is closed
+        });
+
+        // Function to close modal when clicking outside of it
+        window.addEventListener('click', function(event) {
+            if (event.target === modal) {
+                modal.style.display = 'none';
+                overlay.style.display = 'none'; // Hide overlay when clicking outside modal
+            }
+        });
+
+        // Mobile Drawer Toggle Functionality
+        const menuIcon = document.getElementById('menu-icon');
+        const mobileDrawer = document.getElementById('mobile-drawer');
+
+        menuIcon.addEventListener('click', function() {
+            if (mobileDrawer.classList.contains('open')) {
+                mobileDrawer.classList.remove('open');
+                overlay.style.display = 'none';
+            } else {
+                mobileDrawer.classList.add('open');
+                overlay.style.display = 'block'; // Show overlay when mobile drawer is open
+            }
+        });
+
+        overlay.addEventListener('click', function() {
+            mobileDrawer.classList.remove('open');
+            overlay.style.display = 'none'; // Hide overlay when mobile drawer is closed
+        });
+
+        // Button Selection Functionality
+        document.querySelectorAll('.interest-button').forEach(button => {
+            button.addEventListener('click', () => {
+                document.querySelectorAll('.interest-button').forEach(btn => btn.classList.remove('selected'));
+                button.classList.add('selected');
+            });
+        });
+
+        // Intersection Observer for animations
+        const observerOptions = {
+            root: null,
+            rootMargin: '0px',
+            threshold: 0.1
+        };
+
+        const observer = new IntersectionObserver((entries, observer) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.classList.add('animate');
+                    observer.unobserve(entry.target);
+                }
+            });
+        }, observerOptions);
+
+        const targets = document.querySelectorAll('#services-heading, #services p.subheading, .service-item');
+        targets.forEach(target => observer.observe(target));
+    });
+
+    function scrollPortfolio(direction) {
+        const portfolioList = document.getElementById('portfolio-list');
+        const scrollAmount = 320; // Adjust based on your design and item width
+        const leftButton = document.getElementById('left-button');
+        const rightButton = document.getElementById('right-button');
+
+        if (direction === 'left') {
+            portfolioList.scrollBy({ left: -scrollAmount, behavior: 'smooth' });
+            rightButton.style.display = 'block'; // Ensure right button is visible
+            setTimeout(() => {
+                if (portfolioList.scrollLeft === 0) {
+                    leftButton.style.display = 'none';
+                }
+            }, 500);
+        } else if (direction === 'right') {
+            portfolioList.scrollBy({ left: scrollAmount, behavior: 'smooth' });
+            leftButton.style.display = 'block'; // Show left button on scroll right
+        }
+    }
+
+    function scrollTestimonial(direction) {
+        const testimonialList = document.getElementById('testimonial-list');
+        const scrollAmount = direction === 'left' ? -300 : 300;
+        testimonialList.scrollBy({ left: scrollAmount, behavior: 'smooth' });
+    }
+</script>
+
+<script type="module">
+    // Import the functions you need from the SDKs you need
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.13.1/firebase-app.js";
+    import { getAnalytics } from "https://www.gstatic.com/firebasejs/10.13.1/firebase-analytics.js";
+    // TODO: Add SDKs for Firebase products that you want to use
+    // https://firebase.google.com/docs/web/setup#available-libraries
+  
+    // Your web app's Firebase configuration
+    // For Firebase JS SDK v7.20.0 and later, measurementId is optional
+    const firebaseConfig = {
+      apiKey: "AIzaSyDF1y6N8Gb2Rz3jMppFENEWnxZ1WkS59i0",
+      authDomain: "appraysweb.firebaseapp.com",
+      projectId: "appraysweb",
+      storageBucket: "appraysweb.appspot.com",
+      messagingSenderId: "816464375712",
+      appId: "1:816464375712:web:2ba002f944d138ec923ec5",
+      measurementId: "G-R8CQB3MSX1"
+    };
+  
+    // Initialize Firebase
+    const app = initializeApp(firebaseConfig);
+    const analytics = getAnalytics(app);
+  </script>
+
+<footer>
+    <div class="footer-container">
+        <a href="privacy-policy.html" target="_blank">Privacy Policy</a>
+        <span> | © 2024 AppRays. All Rights Reserved</span>
+    </div>
+</footer>
+
+
+</body>
+</html>
